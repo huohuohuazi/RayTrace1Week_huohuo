@@ -2,7 +2,7 @@
 #ifndef HITLIST
 #define HITLIST
 
-#include "hit.h"
+#include "Hit.h"
 #include<memory>
 #include<vector>
 

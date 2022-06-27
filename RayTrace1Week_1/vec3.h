@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "Utils.h"
 //Vec3类，用于向量操作
 class Vec3 {
 public:
@@ -20,7 +21,13 @@ public:
 
         e[0] = e[0] < 0.0 ? 0.0 : e[0];
         e[1] = e[1] < 0.0 ? 0.0 : e[1];
-        e[2] = e[2] < 0.0 ? 0.0 : e[2];
+        e[2] = e[2] < 0.0 ? 0.0 : e[2];   
+    }
+    //开根号
+    void SeflSqrt() {
+        e[0] = sqrt(e[0]);
+        e[1] = sqrt(e[1]);
+        e[2] = sqrt(e[2]);
     }
 
     //-
@@ -54,6 +61,9 @@ public:
     double length_squared() const {
         return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
     }
+    
+
+
     //输出流
     void write_color(std::ostream& out) {
         // Write the translated [0,255] value of each color component.
@@ -61,6 +71,11 @@ public:
             << static_cast<int>(255.999 * e[1]) << ' '
             << static_cast<int>(255.999 * e[2]) << '\n';
     }
+
+    inline static Vec3 random();
+    inline static Vec3 random(double min, double max);
+
+
 };
 
 //输入流
@@ -106,4 +121,36 @@ inline Vec3 cross(const Vec3& u, const Vec3& v) {
 //归一化
 inline Vec3 unit_vector(Vec3 v) {
     return v / v.length();
+}
+
+//生成随机向量
+inline static Vec3 random() {
+    return Vec3(random_double(), random_double(), random_double());
+}
+
+inline static Vec3 random(double min,double max) {
+    return Vec3(random_double(min,max), random_double(min, max), random_double(min, max));
+}
+
+
+//以前的方法，在外接方格内随机选取点，直至在求内部
+inline Vec3 random_in_unit_sphere()
+{
+    while (true)
+    {
+        Vec3 p = random(-1, 1);
+        //寻找到一个在球内的随机点
+        if (p.length_squared() >= 1) continue;
+        return p;
+    }
+}
+
+//现在的方法，通过cos函数，使得光线散射更接近分布律
+inline Vec3 random_unit_vector()
+{
+    double a = random_double(0, 2 * pi);//与法线夹角
+    double z = random_double(-1,1);//线高度（z轴投影）
+    double r = sqrt(1 - z * z);
+    //极坐标换算
+    return Vec3(r * cos(a), r * sin(a), z);
 }

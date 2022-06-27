@@ -1,7 +1,7 @@
 #pragma once
 #ifndef RAY
 #define RAY
-#include "vec3.h"
+#include "Vec3.h"
 
 class Ray {
 private:

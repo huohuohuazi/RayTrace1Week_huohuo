@@ -1,4 +1,4 @@
-#include "ray.h"
+#include "Ray.h"
 #ifndef HIT
 #define HIT
 

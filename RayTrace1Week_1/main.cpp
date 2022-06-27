@@ -4,10 +4,10 @@
 #include <iomanip>
 #include<Windows.h>
 
-#include "sphere.h"
-#include "utils.h"
-#include "hitlist.h"
-#include "camera.h"
+#include "Sphere.h"
+#include "Utils.h"
+#include "Hitlist.h"
+#include "Camera.h"
 
 
 using namespace std;
@@ -45,16 +45,24 @@ void output_ppm(int *p,int height,int width)
 
 }
 
-
-//与物体进行碰撞
-//当参数为HitList时，将遍历List中的所有物体进行碰撞
-Vec3 ray_color(const Ray& r,const Hit& world)
+//递归反射
+//与物体进行碰撞，深度为depth，以为光线最多反射depth
+Vec3 ray_color(const Ray& r,const Hit& world,int depth)
 {
     hit_info info;
-    /*如果碰到*/
-    if (world.hit(r, 0, infinity, info))
+
+    //停止循环反射
+    if (depth <= 0) { return Vec3(1, 0, 0); }
+
+    /*如果光线与物体相交*/
+    if (world.hit(r, 0.001, infinity, info))//0.001防止自交
     {
-        return 0.5 * (info.normal + Vec3(1, 1, 1));
+        Vec3 target = info.point + info.normal + random_unit_vector();
+
+        //大部分的光线都会被吸收, 而不是被反射
+        //表面越暗, 吸收就越有可能发生
+        return 0.5 * ray_color(Ray(info.point, target - info.point), world, depth - 1);//递归反射
+        //将交点作为新光线的发射点，随机向外选取一个方向进行反射
     }
 
     /*背景色*/
@@ -70,7 +78,7 @@ Vec3 ray_color(const Ray& r,const Hit& world)
 int main()
 {
     const int samples_per_pixel = 100;//抗锯齿采样次数
-
+    const int max_depth = 50;//最大递归次数
 
     /*画布，或者说相机*/
     Camera camera;
@@ -100,12 +108,12 @@ int main()
                 double v = double(j + random_double()) / image_height;
 
                 /*对于每个光线，获取其颜色*/
-                Ray r(origin, coner_left_down + u * horizontal + v * vertical);
-                color += ray_color(r, world);
+                Ray r = camera.getRay(u, v);//在u,v位置发射一个光线
+                color += ray_color(r, world, 7);
             }
             color /= samples_per_pixel;
             color.SelfLimit();
-            
+            color.SeflSqrt();//gamma指数
             img[index] = color;
             index++;
         }

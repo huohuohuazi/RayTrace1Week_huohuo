@@ -146,13 +146,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="hit.h" />
-    <ClInclude Include="ray.h" />
-    <ClInclude Include="hitlist.h" />
-    <ClInclude Include="sphere.h" />
-    <ClInclude Include="utils.h" />
-    <ClInclude Include="vec3.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Hit.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Hitlist.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

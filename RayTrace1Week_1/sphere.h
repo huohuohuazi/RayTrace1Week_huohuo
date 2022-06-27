@@ -3,20 +3,31 @@
 #ifndef SPHERE
 #define SPHERE
 
-#include "hit.h"
-#include "vec3.h"
+#include "Hit.h"
+#include "Vec3.h"
 
 //球体类Sphere继承于可碰撞类Hit类
 class Sphere : public Hit {
+public:
+    Vec3 center;//中心坐标
+    double radius;//半径
+
 public:
     Sphere() {}
     Sphere(Vec3 cen, double r) : center(cen), radius(r) {};
 
     virtual bool hit(const Ray& r, double tmin, double tmax, hit_info& rec) const;
 
-public:
-    Vec3 center;//中心坐标
-    double radius;//半径
+    /*void get_uv(const Vec3& p, double& u, double& v)
+    {
+        double phi = atan2(p.z(), p.x());
+        double theta = asin(p.y());
+        u = 1 - (phi + pi) / (2 * pi);
+        v = (theta + pi / 2) / pi;
+    }*/
+
+
+
 };
 
 //碰撞信息保存于hit_info中，包括碰撞点坐标，射线偏移长度，法线向量

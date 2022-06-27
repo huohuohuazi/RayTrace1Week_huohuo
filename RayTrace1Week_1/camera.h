@@ -2,7 +2,7 @@
 #ifndef CAMERA
 #define CAMERA
 
-#include "utils.h"
+#include "Utils.h"
 
 //相机，或者说画布类
 class Camera {
@@ -21,7 +21,7 @@ public:
 	}
 	Camera()
 	{
-		coner_left_down = Vec3(-2.0, -1.0, -1.0);
+		coner_left_down = Vec3(-2.0, -1.0, 1.0);
 		horizontal = Vec3(4.0, 0.0, 0.0);
 		vertical = Vec3(0.0, 2.0, 0.0);
 		origin = Vec3(0.0, 0.0, 0.0);
