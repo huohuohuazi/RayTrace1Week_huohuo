@@ -49,7 +49,7 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, hit_info& info) const
             info.set_face_nornal(r, outward_normal);
             return true;
         }
-        std::cout << "Уќжа" << std::endl;
+        //std::cout << "Уќжа" << std::endl;
     }
     return false;
 }
