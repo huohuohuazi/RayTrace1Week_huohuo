@@ -7,7 +7,7 @@
 #include "sphere.h"
 #include "utils.h"
 #include "hitlist.h"
-
+#include "camera.h"
 
 
 using namespace std;
@@ -33,7 +33,6 @@ void output_ppm(int *p,int height,int width)
     int index = 0;
     for (int j = height-1; j >=0 ; j--) {
         for (int i = 0; i < width; i++) {
-
             //写入数据
             //out_txt_file << img[i][j].x() << ' ' << img[i][j].y() << ' ' << img[i][j].z() << '\n';
             out_txt_file << int(255 * img[index].x()) << ' ' << int(255 * img[index].y()) << ' ' << int(255 * img[index].z()) << '\n';
@@ -70,7 +69,11 @@ Vec3 ray_color(const Ray& r,const Hit& world)
 
 int main()
 {
-    /*画布*/
+    const int samples_per_pixel = 100;//抗锯齿采样次数
+
+
+    /*画布，或者说相机*/
+    Camera camera;
     //左下角为起点
     Vec3 coner_left_down(-2.0, -1.0, 1.0);
     //长宽
@@ -89,20 +92,25 @@ int main()
     for (int j = image_height-1; j >=0 ; j--) {
         cout << "\r当前进度: " << (1-(double(j)/ double(image_height)))*100.0<<'%' << ' ' << std::flush;
         for (int i = 0; i < image_width; i++) {
-            //遍历每个像素
-            double u = double(i) / image_width;
-            double v = double(j) / image_height;
-            
-            /*对于每个光线，获取其颜色*/
-            Ray r(origin, coner_left_down + u * horizontal + v * vertical);
-            
-            Vec3 color = ray_color(r,world);
+            Vec3 color(0, 0, 0);
+            for (int s = 0; s < samples_per_pixel; s++)
+            {
+                //选取同一像素内，中心周围的区域
+                double u = double(i + random_double()) / image_width;
+                double v = double(j + random_double()) / image_height;
+
+                /*对于每个光线，获取其颜色*/
+                Ray r(origin, coner_left_down + u * horizontal + v * vertical);
+                color += ray_color(r, world);
+            }
+            color /= samples_per_pixel;
+            color.SelfLimit();
             
             img[index] = color;
             index++;
         }
     }
-    cout << "done." << endl;
+    cout << endl << "done." << endl;
 
 
     //保存文件

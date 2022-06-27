@@ -12,6 +12,13 @@ public:
 	Vec3 horizontal;
 	Vec3 vertical;
 public:
+	Camera(Vec3 orig,Vec3 cld,Vec3 hor,Vec3 ver)
+	{
+		coner_left_down = orig;
+		horizontal = cld;
+		vertical = hor;
+		origin = ver;
+	}
 	Camera()
 	{
 		coner_left_down = Vec3(-2.0, -1.0, -1.0);
@@ -19,6 +26,7 @@ public:
 		vertical = Vec3(0.0, 2.0, 0.0);
 		origin = Vec3(0.0, 0.0, 0.0);
 	}
+
 	//在某像素生成一个光线
 	Ray getRay(double u,double v)
 	{

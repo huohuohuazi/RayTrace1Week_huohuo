@@ -12,6 +12,17 @@ public:
     double y() const { return e[1]; }
     double z() const { return e[2]; }
 
+    void SelfLimit()
+    {
+        e[0] = e[0] > 1.0 ? 1.0 : e[0];
+        e[1] = e[1] > 1.0 ? 1.0 : e[1];
+        e[2] = e[2] > 1.0 ? 1.0 : e[2];
+
+        e[0] = e[0] < 0.0 ? 0.0 : e[0];
+        e[1] = e[1] < 0.0 ? 0.0 : e[1];
+        e[2] = e[2] < 0.0 ? 0.0 : e[2];
+    }
+
     //-
     Vec3 operator-() const { return Vec3(-e[0], -e[1], -e[2]); }
     //Ë÷Òý
