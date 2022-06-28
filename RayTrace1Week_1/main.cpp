@@ -8,6 +8,7 @@
 #include "Utils.h"
 #include "Hitlist.h"
 #include "Camera.h"
+#include "Materials.h"
 
 
 using namespace std;
@@ -52,17 +53,22 @@ Vec3 ray_color(const Ray& r,const Hit& world,int depth)
     hit_info info;
 
     //停止循环反射
-    if (depth <= 0) { return Vec3(1, 0, 0); }
+    if (depth <= 0) { return Vec3(0, 0, 0); }
 
     /*如果光线与物体相交*/
     if (world.hit(r, 0.001, infinity, info))//0.001防止自交
     {
-        Vec3 target = info.point + info.normal + random_unit_vector();
+        Ray ray_out;
+        Vec3 attenuation;
+
+        if (info.material->scatter(r, info, attenuation, ray_out))
+            return(attenuation * ray_color(ray_out, world, depth - 1));
+        //将交点作为新光线的发射点，也许是漫反射的随机光线，也可以是镜面反射的确定光线
+        return Vec3(0, 0, 0);
 
         //大部分的光线都会被吸收, 而不是被反射
         //表面越暗, 吸收就越有可能发生
-        return 0.5 * ray_color(Ray(info.point, target - info.point), world, depth - 1);//递归反射
-        //将交点作为新光线的发射点，随机向外选取一个方向进行反射
+        
     }
 
     /*背景色*/
@@ -92,8 +98,15 @@ int main()
 
     /*构造场景*/
     HitList world;
-    world.add(make_shared<Sphere>(Vec3(0, 0, 1), 0.5));
-    world.add(make_shared<Sphere>(Vec3(0, -100.5, -1), 100));
+
+    //金属球
+    world.add(make_shared<Sphere>(Vec3(1, 0, -1),0.5,new Matal(Vec3(0.8, 0.6, 0.2))));
+    world.add(make_shared<Sphere>(Vec3(-1, 0, -1),0.5,new Matal(Vec3(0.8, 0.6, 0.8))));
+    //地面
+    world.add(make_shared<Sphere>(Vec3(0, 0, -1),0.5,new Lambert(Vec3(0.8, 0.3, 0.3))));
+    //漫反射球
+    world.add(make_shared<Sphere>( Vec3(0, -100.5, -1),100,new Lambert(Vec3(0.8, 0.3, 0.0))));
+
 
     /*绘制图像*/
     int index = 0;
@@ -109,13 +122,15 @@ int main()
 
                 /*对于每个光线，获取其颜色*/
                 Ray r = camera.getRay(u, v);//在u,v位置发射一个光线
-                color += ray_color(r, world, 7);
+                color += ray_color(r, world, max_depth);
             }
+
             color /= samples_per_pixel;
             color.SelfLimit();
             color.SeflSqrt();//gamma指数
             img[index] = color;
             index++;
+
         }
     }
     cout << endl << "done." << endl;

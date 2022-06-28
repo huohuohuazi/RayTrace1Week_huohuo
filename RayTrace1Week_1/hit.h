@@ -1,6 +1,10 @@
 #include "Ray.h"
+#include "Materials.h"
+
 #ifndef HIT
 #define HIT
+
+class Material;
 
 struct hit_info
 {
@@ -8,6 +12,7 @@ struct hit_info
 	Vec3 normal;//法向
 	double t;
 	bool Is_frontface;//是否为正面
+	Material *material;//碰撞点材质
 
 	//使得法线始终与入射光方向相反
 	inline void set_face_nornal(const Ray& r, const Vec3& outward_normal)

@@ -13,7 +13,7 @@ using std::make_shared;
 
 auto double_ptr = make_shared<double>(0.37);
 auto vec3_ptr = make_shared<Vec3>(1.414214, 2.718281, 1.618034);
-auto sphere_ptr = make_shared<Sphere>(Vec3(0, 0, 0), 1.0);
+
 
 
 class HitList:public Hit//可与光线碰撞的物体列表

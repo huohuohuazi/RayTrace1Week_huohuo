@@ -72,9 +72,10 @@ public:
             << static_cast<int>(255.999 * e[2]) << '\n';
     }
 
+    
     inline static Vec3 random();
     inline static Vec3 random(double min, double max);
-
+    inline double dot(const Vec3& u, const Vec3& v);
 
 };
 
@@ -153,4 +154,11 @@ inline Vec3 random_unit_vector()
     double r = sqrt(1 - z * z);
     //极坐标换算
     return Vec3(r * cos(a), r * sin(a), z);
+}
+
+
+//已知入射光线，求反射光线
+inline Vec3 reflect(const Vec3& ray_in, const Vec3& n)
+{
+    return (ray_in - 2 * dot(ray_in, n) * n);
 }

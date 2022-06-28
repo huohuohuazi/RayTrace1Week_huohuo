@@ -25,22 +25,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Vec3.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="Ray.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Hit.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="Hitlist.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
@@ -50,6 +41,21 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Hit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -148,6 +148,8 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Hit.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Materials.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Hitlist.h" />
     <ClInclude Include="Sphere.h" />
