@@ -92,11 +92,11 @@ int main()
     const double fov = 90;
     const Vec3 vup = Vec3(0,1,0);
 
-    Vec3 look_from(3,3,2);
-    Vec3 look_to(0,0,-1);
+    Vec3 look_from(0,1,2);
+    Vec3 look_to(0, 1, 1);
     //景深
     double lens_pos = (look_from - look_to).length();//焦距
-    double lens_d = 2;//光圈大小
+    double lens_d = 1;//光圈大小
 
     Camera camera(look_from, look_to, vup, fov, aspect, lens_d, lens_pos);
     //Camera camera;//还是默认位置好（
@@ -105,12 +105,12 @@ int main()
     HitList world;
 
     //金属球
-    world.add(make_shared<Sphere>(Vec3(1,0, -1),-0.5,new Dielec(1.5)));
-    world.add(make_shared<Sphere>(Vec3(-1, 0, -1),0.5,new Matal(Vec3(0.8, 0.6, 0.8),1.0)));
+    world.add(make_shared<Sphere>(Vec3(1, 0,-1), -0.5, new Dielec(1.5)));
+    world.add(make_shared<Sphere>(Vec3(-1,0,-1), 0.5, new Matal(Vec3(0.8, 0.6, 0.8), 1.0)));
     //漫反射球
-    world.add(make_shared<Sphere>(Vec3(0, 0, -1),0.5,new Lambert(Vec3(0.8, 0.3, 0.3))));
+    world.add(make_shared<Sphere>(Vec3(0, 0, -1), 0.5, new Lambert(Vec3(0.8, 0.3, 0.3))));
     //地面
-    world.add(make_shared<Sphere>(Vec3(0, -100.5, -1),100,new Lambert(Vec3(0.8, 0.3, 0.0))));
+    world.add(make_shared<Sphere>(Vec3(0, -100.5, -1), 100, new Lambert(Vec3(0.8, 0.3, 0.0))));
 
 
     /*绘制图像*/
