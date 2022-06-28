@@ -77,6 +77,7 @@ Vec3 ray_color(const Ray& r,const Hit& world,int depth)
         Vec3 direction = unit_vector(r.direction());
         double t = 0.5 * (direction.y() + 1.0);
         return (1.0 - t) * Vec3(1.0, 1.0, 1.0) + t * Vec3(0.5, 0.7, 1.0);
+        //return Vec3(1, 0, 0);
     }
     
 }
@@ -87,25 +88,29 @@ int main()
     const int max_depth = 50;//最大递归次数
 
     /*画布，或者说相机*/
-    Camera camera;
-    //左下角为起点
-    Vec3 coner_left_down(-2.0, -1.0, 1.0);
-    //长宽
-    Vec3 horizontal(4.0, 0.0, 0.0);
-    Vec3 vertical(0.0, 2.0, 0.0);
-    //起点
-    Vec3 origin(0.0, 0.0, 0.0);
+    const double aspect = double(image_width) / image_height;
+    const double fov = 90;
+    const Vec3 vup = Vec3(0,1,0);
+
+    Vec3 look_from(3,3,2);
+    Vec3 look_to(0,0,-1);
+    //景深
+    double lens_pos = (look_from - look_to).length();//焦距
+    double lens_d = 2;//光圈大小
+
+    Camera camera(look_from, look_to, vup, fov, aspect, lens_d, lens_pos);
+    //Camera camera;//还是默认位置好（
 
     /*构造场景*/
     HitList world;
 
     //金属球
-    world.add(make_shared<Sphere>(Vec3(1, 0, -1),-0.5,new Dielec(1.5)));
+    world.add(make_shared<Sphere>(Vec3(1,0, -1),-0.5,new Dielec(1.5)));
     world.add(make_shared<Sphere>(Vec3(-1, 0, -1),0.5,new Matal(Vec3(0.8, 0.6, 0.8),1.0)));
     //漫反射球
     world.add(make_shared<Sphere>(Vec3(0, 0, -1),0.5,new Lambert(Vec3(0.8, 0.3, 0.3))));
     //地面
-    world.add(make_shared<Sphere>( Vec3(0, -100.5, -1),100,new Lambert(Vec3(0.8, 0.3, 0.0))));
+    world.add(make_shared<Sphere>(Vec3(0, -100.5, -1),100,new Lambert(Vec3(0.8, 0.3, 0.0))));
 
 
     /*绘制图像*/

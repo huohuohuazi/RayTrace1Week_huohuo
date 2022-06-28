@@ -156,6 +156,17 @@ inline Vec3 random_unit_vector()
     return Vec3(r * cos(a), r * sin(a), z);
 }
 
+//从单位小圆盘中射出光线，模拟透镜，依然是排除法
+inline Vec3 random_in_unit_disk()
+{
+    while (true)
+    {
+        Vec3 p = Vec3(random_double(-1, 1), random_double(-1, 1), 0);
+        //寻找到一个在球内的随机点
+        if (p.length_squared() >= 1) continue;
+        return p;
+    }
+}
 
 //已知入射光线，求反射光线
 inline Vec3 reflect(const Vec3& ray_in, const Vec3& n)

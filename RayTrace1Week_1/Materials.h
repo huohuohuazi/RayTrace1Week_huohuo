@@ -94,6 +94,7 @@ bool Dielec::scatter(const Ray& ray_in, hit_info& info, Vec3& attenuation, Ray& 
 #pragma endregion
 
 //折射率的近似公式，因为现实中玻璃的折射率与入射角有关系
+//原来叫菲涅尔项
 double schlick(double cosine, double ref_idx) {
 	auto r0 = (1 - ref_idx) / (1 + ref_idx);
 	r0 = r0 * r0;
