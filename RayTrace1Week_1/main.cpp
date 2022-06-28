@@ -100,11 +100,11 @@ int main()
     HitList world;
 
     //金属球
-    world.add(make_shared<Sphere>(Vec3(1, 0, -1),0.5,new Matal(Vec3(0.8, 0.6, 0.2))));
-    world.add(make_shared<Sphere>(Vec3(-1, 0, -1),0.5,new Matal(Vec3(0.8, 0.6, 0.8))));
-    //地面
-    world.add(make_shared<Sphere>(Vec3(0, 0, -1),0.5,new Lambert(Vec3(0.8, 0.3, 0.3))));
+    world.add(make_shared<Sphere>(Vec3(1, 0, -1),-0.5,new Dielec(1.5)));
+    world.add(make_shared<Sphere>(Vec3(-1, 0, -1),0.5,new Matal(Vec3(0.8, 0.6, 0.8),1.0)));
     //漫反射球
+    world.add(make_shared<Sphere>(Vec3(0, 0, -1),0.5,new Lambert(Vec3(0.8, 0.3, 0.3))));
+    //地面
     world.add(make_shared<Sphere>( Vec3(0, -100.5, -1),100,new Lambert(Vec3(0.8, 0.3, 0.0))));
 
 

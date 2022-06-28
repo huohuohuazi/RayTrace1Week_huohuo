@@ -134,7 +134,7 @@ inline static Vec3 random(double min,double max) {
 }
 
 
-//以前的方法，在外接方格内随机选取点，直至在求内部
+//随机选取方向，以前的方法，在外接方格内随机选取点，直至在求内部
 inline Vec3 random_in_unit_sphere()
 {
     while (true)
@@ -161,4 +161,13 @@ inline Vec3 random_unit_vector()
 inline Vec3 reflect(const Vec3& ray_in, const Vec3& n)
 {
     return (ray_in - 2 * dot(ray_in, n) * n);
+}
+
+//已知入射光线，求折射光线
+inline Vec3 refract(const Vec3& ray_in, const Vec3& n, double etai_over_etat)
+{
+    auto cos_theta = dot(-ray_in, n);
+    Vec3 r_out_parallel = etai_over_etat * (ray_in + cos_theta * n);
+    Vec3 r_out_perp = -sqrt(1.0 - r_out_parallel.length_squared()) * n;
+    return r_out_parallel + r_out_perp;
 }
