@@ -82,6 +82,52 @@ Vec3 ray_color(const Ray& r,const Hit& world,int depth)
     
 }
 
+HitList GenerateWorld()
+{
+    /*构造场景*/
+    HitList world;
+
+    //
+    world.add(make_shared<Sphere>(Vec3(0, 1, 0), 1.0, new Dielec(1.5)));
+    world.add(make_shared<Sphere>(Vec3(-4, 1, 0), 1.0, new Lambert(Vec3(0.4, 0.2, 0.1))));
+    world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, new Matal(Vec3(0.7, 0.6, 0.5), 0.0)));
+    //地面
+    world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert(Vec3(0.5, 0.5, 0.5))));
+
+    /*随机小球*/
+    int i = 1;
+    for (int a = -11; a < 11; a++) {
+
+        break;//不画小球了，太慢了
+
+        for (int b = -11; b < 11; b++) {
+            auto choose_mat = random_double();
+            Vec3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
+            if ((center - Vec3(4, 0.2, 0)).length() > 0.9) {
+                if (choose_mat < 0.8) {
+                    // diffuse
+                    auto albedo = random() * random();
+                    world.add(
+                        make_shared<Sphere>(center, 0.2, new Lambert(albedo)));
+                }
+                else if (choose_mat < 0.95) {
+                    // metal
+                    auto albedo = random(.5, 1);
+                    auto fuzz = random_double(0, .5);
+                    world.add(
+                        make_shared<Sphere>(center, 0.2, new Matal(albedo, fuzz)));
+                }
+                else {
+                    // glass
+                    world.add(make_shared<Sphere>(center, 0.2, new Dielec(1.5)));
+                }
+            }
+        }
+    }
+    return world;
+}
+
+
 int main()
 {
     const int samples_per_pixel = 100;//抗锯齿采样次数
@@ -89,28 +135,20 @@ int main()
 
     /*画布，或者说相机*/
     const double aspect = double(image_width) / image_height;
-    const double fov = 90;
+    const double fov = 20;
     const Vec3 vup = Vec3(0,1,0);
 
-    Vec3 look_from(0,1,2);
-    Vec3 look_to(0, 1, 1);
+    Vec3 look_from(13, 2, 3);
+    Vec3 look_to(0, 2,0);
     //景深
-    double lens_pos = (look_from - look_to).length();//焦距
-    double lens_d = 1;//光圈大小
+    double lens_pos = 10.0;//焦距
+    double lens_d = 0.1;//光圈大小
 
     Camera camera(look_from, look_to, vup, fov, aspect, lens_d, lens_pos);
     //Camera camera;//还是默认位置好（
 
-    /*构造场景*/
-    HitList world;
-
-    //金属球
-    world.add(make_shared<Sphere>(Vec3(1, 0,-1), -0.5, new Dielec(1.5)));
-    world.add(make_shared<Sphere>(Vec3(-1,0,-1), 0.5, new Matal(Vec3(0.8, 0.6, 0.8), 1.0)));
-    //漫反射球
-    world.add(make_shared<Sphere>(Vec3(0, 0, -1), 0.5, new Lambert(Vec3(0.8, 0.3, 0.3))));
-    //地面
-    world.add(make_shared<Sphere>(Vec3(0, -100.5, -1), 100, new Lambert(Vec3(0.8, 0.3, 0.0))));
+    //场景
+    HitList world = GenerateWorld();
 
 
     /*绘制图像*/
