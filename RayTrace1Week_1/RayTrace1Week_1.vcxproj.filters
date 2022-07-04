@@ -25,9 +25,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ray.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>源文件</Filter>
     </ClInclude>
@@ -56,6 +53,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingSphere.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
