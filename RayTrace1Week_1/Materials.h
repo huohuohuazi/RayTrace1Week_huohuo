@@ -19,11 +19,12 @@ public:
 bool Lambert::scatter(const Ray& ray_in, hit_info& info, Vec3& attenuation, Ray& ray_out) const
 {
 	Vec3 scatter_direction = info.normal + random_unit_vector();
-	ray_out = Ray(info.point, scatter_direction);
+	ray_out = Ray(info.point, scatter_direction,ray_in.time());
 	attenuation = albedo;
 	return true;
 }
 #pragma endregion
+
 
 #pragma region ½ğÊô
 //½ğÊô²ÄÖÊ

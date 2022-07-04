@@ -19,7 +19,7 @@ public:
     //Sphere(Vec3 cen, double r) { std::cout << "A Simple"; }
     Sphere(Vec3 cen, double r, Material* mat) : center(cen), radius(r), material(mat) { };
 
-    virtual bool hit(const Ray& r, double tmin, double tmax, hit_info& rec) const;
+    virtual bool hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) const;
 
     /*void get_uv(const Vec3& p, double& u, double& v)
     {
@@ -34,10 +34,10 @@ public:
 };
 
 //碰撞信息保存于hit_info中，包括碰撞点坐标，射线偏移长度，法线向量
-bool Sphere::hit(const Ray& r, double t_min, double t_max, hit_info& info) const {
-    Vec3 oc = r.origin() - center;
-    double a = r.direction().length_squared();
-    double half_b = dot(oc, r.direction());
+bool Sphere::hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) const {
+    Vec3 oc = ray_in.origin() - center;
+    double a = ray_in.direction().length_squared();
+    double half_b = dot(oc, ray_in.direction());
     double c = oc.length_squared() - radius * radius;
     double discriminant = half_b * half_b - a * c;
 
@@ -46,13 +46,13 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, hit_info& info) const
 
         //距离光源近距离的交点
         double temp = (-half_b - root) / a;
-        if (temp < t_max && temp > t_min) {
+        if (temp < tmax && temp > tmin) {
             //交点位置
             info.t = temp;
-            info.point = r.at(info.t);//交点坐标
+            info.point = ray_in.at(info.t);//交点坐标
             //法线
             Vec3 outward_normal = (info.point - center) / radius;
-            info.set_face_nornal(r, outward_normal);
+            info.set_face_nornal(ray_in, outward_normal);
 
             //材质信息
             
@@ -62,11 +62,11 @@ bool Sphere::hit(const Ray& r, double t_min, double t_max, hit_info& info) const
         }
         //距离光源远距离的交点
         temp = (-half_b + root) / a;
-        if (temp < t_max && temp > t_min) {
+        if (temp < tmax && temp > tmin) {
             info.t = temp;
-            info.point = r.at(info.t);
+            info.point = ray_in.at(info.t);
             Vec3 outward_normal = (info.point - center) / radius;//法向向量（单位化）
-            info.set_face_nornal(r, outward_normal);
+            info.set_face_nornal(ray_in, outward_normal);
 
             //info.material = make_shared<Material>(Vec3(0,0,0));
             info.material = material;

@@ -10,7 +10,7 @@ struct hit_info
 {
 	Vec3 point;//相交点坐标
 	Vec3 normal;//法向
-	double t;
+	double t;//碰撞的位置
 	bool Is_frontface;//是否为正面
 	Material *material;//碰撞点材质
 
@@ -25,7 +25,7 @@ struct hit_info
 
 class Hit {
 public:
-	virtual bool hit(const Ray& r, double t_min, double t_max, hit_info& rec) const = 0;
+	virtual bool hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) const=0;
 	//与球体碰撞
 	
 };
