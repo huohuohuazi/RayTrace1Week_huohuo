@@ -60,7 +60,7 @@ Vec3 ray_color(const Ray& r,const Hit& world,int depth)
     if (world.hit(r, 0.001, infinity, info))//0.001防止自交
     {
         Ray ray_out;
-        Vec3 attenuation;
+        Vec3 attenuation;//折射or反射的方向以及强度
 
         if (info.material->scatter(r, info, attenuation, ray_out))
             return(attenuation * ray_color(ray_out, world, depth - 1));

@@ -16,18 +16,17 @@ public:
 	
 	double lens_radius;//光圈大小，应该说半径
 
-	double time0, time1;//时刻
+	double time0, time1;//时间范围
 
 public:
 	
 
-	//vfov:垂直方向fov，aspect:水平方向长度/竖直方向长度,lens_size:光圈直径,lens_dis:焦距,pos:相机位置，lookat:从pos看向lookat位置，上方向量为vup
-	Camera(
-		Vec3 pos, Vec3 lookat, Vec3 vup,
-		double vfov, double aspect,
-		double lens_size,double lens_dis,
-		double t0,double t1
-	){
+	//pos:相机位置，lookat:从pos看向lookat位置，上方向量为vup
+	Camera(Vec3 pos, Vec3 lookat, Vec3 vup,
+		double vfov, double aspect,//vfov:垂直方向fov，aspect:水平方向长度/竖直方向长度
+		double lens_size,double lens_dis,//lens_size:光圈直径,lens_dis:焦距
+		double t0,double t1)
+	{
 		Vec3 u, v, w;//描述相机旋转
 
 		origin = pos;
@@ -58,11 +57,10 @@ public:
 	{
 		Vec3 rd = lens_radius * random_in_unit_disk();
 		Vec3 offset = u * rd.x() + v * rd.y();
-		return Ray(
-			origin + offset, 
+		return Ray(origin + offset, 
 			coner_left_down + s * horizontal + t * vertical - origin - offset,
-			random_double(time0, time1)
-		);
+			random_double(time0, time1));//随机选取一个时间
+		//每个点发射的光线时间不同，对于运动的物体，它在其每个时间点都有概率命中，由此产生残影/动态模糊的效果
 	}
 };
 
