@@ -20,6 +20,7 @@ public:
     Sphere(Vec3 cen, double r, Material* mat) : center(cen), radius(r), material(mat) { };
 
     virtual bool hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) const;
+    virtual bool boundingBox(double t0, double t1, AABB& box) const;
 
     /*void get_uv(const Vec3& p, double& u, double& v)
     {
@@ -76,4 +77,16 @@ bool Sphere::hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) co
     }
     return false;
 }
+
+//求球体的包围盒
+bool Sphere::boundingBox(double t0, double t1, AABB& box) const
+{
+    box = AABB(
+        center - Vec3(radius, radius, radius),
+        center + Vec3(radius, radius, radius)
+    );
+    return true;
+}
+
+
 #endif

@@ -2,6 +2,7 @@
 #ifndef MATERIALS
 #define MATERIALS
 #include "Material.h"
+#include "Texture.h"
 
 double schlick(double cosine, double ref_idx);
 
@@ -9,18 +10,19 @@ double schlick(double cosine, double ref_idx);
 //漫反射材质
 class Lambert :public Material {
 public:
-	Vec3 albedo;//总衰减率，由于要进行随机散射， 因此attenuation=albedo/p
+	Texture *albedo;//以前是反射指定的颜色，现在通过材质影响
+	 
 public:
-	Lambert(const Vec3& n) :albedo(n) {}
-
+	Lambert(Texture* a) :albedo(a) {}
 	virtual bool scatter(const Ray& ray_in, hit_info& info, Vec3& attenuation, Ray& ray_out) const;
-	
 };
 bool Lambert::scatter(const Ray& ray_in, hit_info& info, Vec3& attenuation, Ray& ray_out) const
 {
+	//漫反射方向
 	Vec3 scatter_direction = info.normal + random_unit_vector();
 	ray_out = Ray(info.point, scatter_direction,ray_in.time());
-	attenuation = albedo;
+	//反射效果
+	attenuation = albedo->value(info.u, info.v, info.point);//获取该点的颜色信息
 	return true;
 }
 #pragma endregion

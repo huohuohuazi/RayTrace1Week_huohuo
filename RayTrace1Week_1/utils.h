@@ -21,6 +21,7 @@ inline double degrees_to_radians(double degrees) {
     return degrees * pi / 180;
 }
 //比较大小
+//自己写的ffmin/ffmax快一些
 inline double ffmin(double a, double b) { return a <= b ? a : b; }
 inline double ffmax(double a, double b) { return a >= b ? a : b; }
 
@@ -33,6 +34,16 @@ inline double random_double() {
 inline double random_double(double min,double max) {
     return min + (max - min) * random_double();
 }
+//返回0-1之间的随机整数
+inline int random_int() {
+    return int(floor(random_double() + 0.5));
+}
+//返回min-max之间的随机整数
+inline int random_int(int min,int max) {
+    return int(floor(random_double(double(min), double(max + 1))));
+}
+
+
 //将x限制在min,max中
 inline double clamp(double x, double min, double max) {
     if (x < min) return min;

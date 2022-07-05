@@ -19,6 +19,7 @@ public:
         :center0(cen0), center1(cen1), time0(t0), time1(t1), radius(r), material(m){};
 
     virtual bool hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) const;
+    virtual bool boundingBox(double t0, double t1, AABB& box) const;
 
     Vec3 position(double time) const;//于某一时间点的速度
 
@@ -71,6 +72,21 @@ bool Moving_sphere::hit(const Ray& ray_in, double tmin, double tmax, hit_info& i
         }
     }
     return false;
+}
+
+//求球体的包围盒
+bool Moving_sphere::boundingBox(double t0, double t1, AABB& box) const
+{
+    //计算它在两个时间点的包围盒
+    AABB box0(
+        position(t0) - Vec3(radius, radius, radius),
+        position(t0) + Vec3(radius, radius, radius));
+    AABB box1(
+        position(t1) - Vec3(radius, radius, radius),
+        position(t1) + Vec3(radius, radius, radius));
+
+    box = surroundingBox(box0, box1);
+    return true;
 }
 
 

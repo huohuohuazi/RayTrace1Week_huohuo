@@ -10,7 +10,7 @@
 #include "Camera.h"
 #include "Materials.h"
 #include "MovingSphere.h"
-
+#include "BVH.h"
 
 using namespace std;
 #define INF 1000000000
@@ -83,28 +83,31 @@ Vec3 ray_color(const Ray& r,const Hit& world,int depth)
     
 }
 
-HitList GenerateWorld()
+BVH_node GenerateWorld()
 {
     /*构造场景*/
     HitList world;
     //地面
-    world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert(Vec3(0.5, 0.5, 0.5))));
+    world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert(new Checker_Texture(
+        new ConstantTexture(Vec3(0.2, 0.3, 0.1)),
+        new ConstantTexture(Vec3(0.9, 0.9, 0.9))
+        ))));
     
 
     world.add(make_shared<Sphere>(Vec3(0, 1, 0), 1.0, new Dielec(1.5)));
     world.add(make_shared<Sphere>(Vec3(-4, 1, 0), 1.0, new Matal(Vec3(0.7, 0.6, 0.5), 0.0)));
     
-    //world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, new Lambert(Vec3(0.4, 0.2, 0.1))));
+    //world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, new Lambert(new ConstantTexture(Vec3(0.4, 0.2, 0.1)))));
 
     Vec3 center(4, 1, 0);
+    
     world.add(make_shared<Moving_sphere>(
         0.5, center, center + Vec3(0, 1, 0),
-        0.0, 1.0, new Lambert(Vec3(0.4, 0.2, 0.1))));
-
-
+        0.0, 1.0, new Lambert(new ConstantTexture(Vec3(0.4, 0.2, 0.1)))));
 
 
     /*随机小球*/
+    /*
     int i = 1;
     for (int a = -11; a < 11; a++) {
 
@@ -134,11 +137,11 @@ HitList GenerateWorld()
             }
         }
     }
+    */
     
-
-    
-
-    return world;
+    //将场景生成为BVH二叉树
+    return (BVH_node(world, 0, 1));
+    //return world;
 }
 
 
@@ -162,8 +165,8 @@ int main()
     //Camera camera;//还是默认位置好（
 
     //场景
-    HitList world = GenerateWorld();
-
+    //HitList world = GenerateWorld();
+    BVH_node bvhtree= GenerateWorld();
 
     /*绘制图像*/
     int index = 0;
@@ -179,7 +182,7 @@ int main()
 
                 /*对于每个光线，获取其颜色*/
                 Ray r = camera.getRay(u, v);//在u,v位置发射一个光线
-                color += ray_color(r, world, max_depth);
+                color += ray_color(r, bvhtree, max_depth);
             }
 
             color /= samples_per_pixel;

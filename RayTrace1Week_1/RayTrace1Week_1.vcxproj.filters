@@ -61,5 +61,11 @@
     <ClInclude Include="Ray.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
