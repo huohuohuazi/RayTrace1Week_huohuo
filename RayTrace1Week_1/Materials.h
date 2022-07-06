@@ -8,7 +8,8 @@ double schlick(double cosine, double ref_idx);
 
 #pragma region 漫反射
 //漫反射材质
-class Lambert :public Material {
+class Lambert :public Material
+{
 public:
 	Texture *albedo;//以前是反射指定的颜色，现在通过材质影响
 	 

@@ -38,6 +38,7 @@ public:
 
 	//ЧѓАќЮЇКа
 	virtual bool boundingBox(double t0, double t1, AABB& box) const = 0;
+	//virtual void getUV(const Vec3& point, double& u, double& v) const = 0;
 };
 
 

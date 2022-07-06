@@ -88,22 +88,25 @@ BVH_node GenerateWorld()
     /*构造场景*/
     HitList world;
     //地面
-    world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert(new Checker_Texture(
+    /*world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert(new Checker_Texture(
         new ConstantTexture(Vec3(0.2, 0.3, 0.1)),
         new ConstantTexture(Vec3(0.9, 0.9, 0.9))
-        ))));
-    
+        ))));*/
+    world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert((new NoiseTexture(2)))));
+
+  
+
 
     world.add(make_shared<Sphere>(Vec3(0, 1, 0), 1.0, new Dielec(1.5)));
     world.add(make_shared<Sphere>(Vec3(-4, 1, 0), 1.0, new Matal(Vec3(0.7, 0.6, 0.5), 0.0)));
     
-    //world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, new Lambert(new ConstantTexture(Vec3(0.4, 0.2, 0.1)))));
+    world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, new Lambert(new ImageTexture("earthmap.jpg"))));
 
     Vec3 center(4, 1, 0);
     
-    world.add(make_shared<Moving_sphere>(
+    /*world.add(make_shared<Moving_sphere>(
         0.5, center, center + Vec3(0, 1, 0),
-        0.0, 1.0, new Lambert(new ConstantTexture(Vec3(0.4, 0.2, 0.1)))));
+        0.0, 1.0, new Lambert(new ConstantTexture(Vec3(0.4, 0.2, 0.1)))));*/
 
 
     /*随机小球*/
@@ -150,6 +153,7 @@ int main()
     const int samples_per_pixel = 100;//抗锯齿采样次数
     const int max_depth = 50;//最大递归次数
 
+
     /*画布，或者说相机*/
     const double aspect = double(image_width) / image_height;
     const double fov = 20;
@@ -160,13 +164,14 @@ int main()
     //景深
     double lens_pos = 10.0;//焦距
     double lens_d = 0.0;//光圈大小
-
     Camera camera(look_from, look_to, vup, fov, aspect, lens_d, lens_pos,0.0,1.0);
     //Camera camera;//还是默认位置好（
+
 
     //场景
     //HitList world = GenerateWorld();
     BVH_node bvhtree= GenerateWorld();
+
 
     /*绘制图像*/
     int index = 0;

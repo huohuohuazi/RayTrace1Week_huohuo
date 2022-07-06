@@ -21,6 +21,7 @@ public:
 
     virtual bool hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) const;
     virtual bool boundingBox(double t0, double t1, AABB& box) const;
+    virtual void getUV(const Vec3& point, double& u, double& v) const;
 
     /*void get_uv(const Vec3& p, double& u, double& v)
     {
@@ -30,7 +31,7 @@ public:
         v = (theta + pi / 2) / pi;
     }*/
 
-
+    
 
 };
 
@@ -56,7 +57,7 @@ bool Sphere::hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) co
             info.set_face_nornal(ray_in, outward_normal);
 
             //材质信息
-            
+            getUV((info.point - center) / radius, info.u, info.v);
             info.material = material;
 
             return true;
@@ -71,6 +72,7 @@ bool Sphere::hit(const Ray& ray_in, double tmin, double tmax, hit_info& info) co
 
             //info.material = make_shared<Material>(Vec3(0,0,0));
             info.material = material;
+            getUV((info.point - center) / radius, info.u, info.v);
             return true;
         }
         //std::cout << "命中" << std::endl;
@@ -88,5 +90,13 @@ bool Sphere::boundingBox(double t0, double t1, AABB& box) const
     return true;
 }
 
+//点坐标转化为(u,v)坐标
+void Sphere::getUV(const Vec3& point, double& u, double& v) const
+{
+    double phi = atan2(point.z(), point.x());
+    double theta = asin(point.y());
+    u = 1 - (phi + pi) / (2 * pi);
+    v = (theta + pi / 2) / pi;
+}
 
 #endif

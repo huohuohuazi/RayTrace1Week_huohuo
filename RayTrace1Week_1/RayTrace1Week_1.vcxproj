@@ -153,6 +153,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Materials.h" />
     <ClInclude Include="MovingSphere.h" />
+    <ClInclude Include="Perlin.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Hitlist.h" />
     <ClInclude Include="Sphere.h" />

@@ -67,5 +67,8 @@
     <ClInclude Include="BVH.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="Perlin.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
