@@ -49,4 +49,5 @@ bool overlap(double d, double D, double e, double E, double f, double F)//Èı¸öÇø
 	return (f < F);
 }
 
+
 #endif

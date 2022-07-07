@@ -47,6 +47,7 @@ bool Matal::scatter(const Ray& ray_in, hit_info& info, Vec3& attenuation, Ray& r
 	Vec3 scatter_direction = reflect(unit_vector(ray_in.direction()), info.normal);
 	ray_out = Ray(info.point, scatter_direction+fuzz*random_in_unit_sphere());
 	attenuation = albedo;
+
 	return (dot(ray_out.direction(), info.normal) > 0);
 }
 #pragma endregion
@@ -104,6 +105,32 @@ double schlick(double cosine, double ref_idx) {
 	r0 = r0 * r0;
 	return (r0 + (1 - r0) * pow((1 - cosine), 5));
 }
+
+
+class DiffuseLight :public Material
+{
+public:
+	Texture* emitted;
+public:
+	DiffuseLight(Texture* a):emitted(a){}
+	
+	virtual bool scatter(const Ray& ray_in, hit_info& info, Vec3& attenuation, Ray& ray_out) const;
+	
+	Vec3 emit(double u,double v,const Vec3& point) const
+	{
+		return emitted->value(u, v, point);
+	}
+
+};
+bool DiffuseLight::scatter(const Ray& ray_in, hit_info& info, Vec3& attenuation, Ray& ray_out) const
+{
+	return false;
+}
+
+
+
+
+
 
 
 #endif

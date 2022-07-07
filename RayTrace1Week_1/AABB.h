@@ -24,11 +24,12 @@ public:
 		{
 			//简化了一些计算，运算的结果为判定光线是否与判定盒碰撞，仅根据三个维度的边界信息进行计算
 			//即与长方体求交
-			double invD = 1.0 / ray_in.direction().x();
-			double t0 = (_min.x() - ray_in.origin().x()) * invD;
-			double t1 = (_max.x() - ray_in.origin().x()) * invD;
+			double invD = 1.0 / ray_in.direction()[a];
+			double t0 = (_min[a] - ray_in.origin()[a]) * invD;
+			double t1 = (_max[a] - ray_in.origin()[a]) * invD;
 
-			if (invD < 0)std::swap(t0, t1);
+			//t-=tan(theta)=与该方向最负位置点连线/
+			if (invD < 0) std::swap(t0, t1);
 
 			tmin = t0 > tmin ? t0 : tmin;
 			tmax = t1 < tmax ? t1 : tmax;

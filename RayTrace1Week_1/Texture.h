@@ -78,10 +78,10 @@ Vec3 NoiseTexture::value(double u, double v, const Vec3& point) const
 	
 	//使用单一噪声
 	//return Vec3(1, 1, 1) * 0.5 * (1 + noise.noise(scale * point));
-	//return Vec3(1, 1, 1) * 0.5 * (1 + sin(scale * point.z() + 10 * noise.noise(point)));
+	return Vec3(1, 1, 1) * 0.5 * (1 + sin(scale * point.z() + 10 * noise.noise(point)));
 
 	//使用扰动or叠加噪声，同时利用sin函数调整相位，使得条纹起伏
-	return Vec3(1, 1, 1) * 0.5 * (1 + sin(scale * point.z() + 10 * noise.turb(point)));
+	//return Vec3(1, 1, 1) * 0.5 * (1 + sin(scale * point.z() + 10 * noise.turb(point)));
 }
 
 

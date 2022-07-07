@@ -11,12 +11,14 @@
 #include "Materials.h"
 #include "MovingSphere.h"
 #include "BVH.h"
+#include "Rectangle.h"
 
 using namespace std;
 #define INF 1000000000
 
-const int image_width = 200;
-const int image_height = 100;
+const int image_width = 1000;
+const int image_height = 1000;
+
 //Vec3 img[image_width][image_height];
 Vec3 img[image_width* image_height];
 
@@ -48,8 +50,8 @@ void output_ppm(int *p,int height,int width)
 }
 
 //递归反射
-//与物体进行碰撞，深度为depth，以为光线最多反射depth
-Vec3 ray_color(const Ray& r,const Hit& world,int depth)
+//与物体进行碰撞，深度为depth，以为光线最多反射depth。事实上首先碰撞的是BVH包围盒
+Vec3 ray_color(const Ray& ray_in, const Vec3& background,const Hit& world,int depth)
 {
     hit_info info;
 
@@ -57,15 +59,19 @@ Vec3 ray_color(const Ray& r,const Hit& world,int depth)
     if (depth <= 0) { return Vec3(0, 0, 0); }
 
     /*如果光线与物体相交*/
-    if (world.hit(r, 0.001, infinity, info))//0.001防止自交
+    if (world.hit(ray_in, 0.001, infinity, info))//0.001防止自交
     {
         Ray ray_out;
         Vec3 attenuation;//折射or反射的方向以及强度
 
-        if (info.material->scatter(r, info, attenuation, ray_out))
-            return(attenuation * ray_color(ray_out, world, depth - 1));
-        //将交点作为新光线的发射点，也许是漫反射的随机光线，也可以是镜面反射的确定光线
-        return Vec3(0, 0, 0);
+        Vec3 emitted = info.material->emit(info.u, info.v, info.point);//发光信息 
+
+        //如果不反射，则为发光材质
+        if (!info.material->scatter(ray_in, info, attenuation, ray_out))
+            return emitted;
+        //进行反射，将交点作为新光线的发射点，也许是漫反射的随机光线，也可以是镜面反射的确定光线
+        return (attenuation * ray_color(ray_out, background, world, depth - 1));
+        
 
         //大部分的光线都会被吸收, 而不是被反射
         //表面越暗, 吸收就越有可能发生
@@ -75,15 +81,17 @@ Vec3 ray_color(const Ray& r,const Hit& world,int depth)
     /*背景色*/
     else
     {
-        Vec3 direction = unit_vector(r.direction());
-        double t = 0.5 * (direction.y() + 1.0);
-        return (1.0 - t) * Vec3(1.0, 1.0, 1.0) + t * Vec3(0.5, 0.7, 1.0);
+        //以前返回蓝色背景，现在去除环境光
+        return background;
+        //Vec3 direction = unit_vector(r.direction());
+        //double t = 0.5 * (direction.y() + 1.0);
+        //return (1.0 - t) * Vec3(1.0, 1.0, 1.0) + t * Vec3(0.5, 0.7, 1.0);
         //return Vec3(1, 0, 0);
     }
     
 }
 
-BVH_node GenerateWorld()
+HitList GenerateWorld()
 {
     /*构造场景*/
     HitList world;
@@ -92,22 +100,35 @@ BVH_node GenerateWorld()
         new ConstantTexture(Vec3(0.2, 0.3, 0.1)),
         new ConstantTexture(Vec3(0.9, 0.9, 0.9))
         ))));*/
-    world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert((new NoiseTexture(2)))));
-
-  
+   //world.add(make_shared<Sphere>(Vec3(0, -1000, 0), 1000, new Lambert((new NoiseTexture(4)))));
 
 
-    world.add(make_shared<Sphere>(Vec3(0, 1, 0), 1.0, new Dielec(1.5)));
-    world.add(make_shared<Sphere>(Vec3(-4, 1, 0), 1.0, new Matal(Vec3(0.7, 0.6, 0.5), 0.0)));
+    //墙壁材质
+    Material* red = new Lambert(new ConstantTexture(Vec3(0.65, 0.05, 0.05)));
+    Material* white = new Lambert(new ConstantTexture(Vec3(0.73, 0.73, 0.73)));
+    Material* green = new Lambert(new ConstantTexture(Vec3(0.12, 0.45, 0.15)));
+    //灯光材质
+    Material* light = new DiffuseLight(new ConstantTexture(Vec3(15, 15, 15)));
+
     
-    world.add(make_shared<Sphere>(Vec3(4, 1, 0), 1.0, new Lambert(new ImageTexture("earthmap.jpg"))));
-
-    Vec3 center(4, 1, 0);
+    //墙壁
+    //左
+    world.add(make_shared<Flipface>(make_shared<YZRectangle>(0, 555, 0, 555, 555, green)));
+    //右
+    world.add(make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
     
-    /*world.add(make_shared<Moving_sphere>(
-        0.5, center, center + Vec3(0, 1, 0),
-        0.0, 1.0, new Lambert(new ConstantTexture(Vec3(0.4, 0.2, 0.1)))));*/
+    //上
+    world.add(make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
+    
+    //下
+    world.add(make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
+    
+    //后
+    world.add(make_shared<Flipface>(make_shared<XYRectangle>(0, 555, 0, 555, 555, white)));
+    
 
+    //灯光
+    world.add(make_shared<XZRectangle>(213, 343, 227, 332, 554, light));
 
     /*随机小球*/
     /*
@@ -143,34 +164,36 @@ BVH_node GenerateWorld()
     */
     
     //将场景生成为BVH二叉树
-    return (BVH_node(world, 0, 1));
-    //return world;
+    //return (BVH_node(world, 0, 1));
+    return world;
 }
+
+
 
 
 int main()
 {
     const int samples_per_pixel = 100;//抗锯齿采样次数
-    const int max_depth = 50;//最大递归次数
-
+    const int max_depth = 80;//最大递归次数
+    const Vec3 background(0, 0, 0);
 
     /*画布，或者说相机*/
     const double aspect = double(image_width) / image_height;
-    const double fov = 20;
+    const double fov = 40;
     const Vec3 vup = Vec3(0,1,0);
 
-    Vec3 look_from(13, 2, 3);
-    Vec3 look_to(0, 2,0);
-    //景深
+    Vec3 look_from(278, 278, -800);
+    Vec3 look_to(278, 278, 0);
+    
     double lens_pos = 10.0;//焦距
     double lens_d = 0.0;//光圈大小
-    Camera camera(look_from, look_to, vup, fov, aspect, lens_d, lens_pos,0.0,1.0);
+    Camera camera(look_from, look_to, vup, fov, aspect, lens_d, lens_pos, 0.0, 1.0);
     //Camera camera;//还是默认位置好（
 
 
     //场景
-    //HitList world = GenerateWorld();
-    BVH_node bvhtree= GenerateWorld();
+    HitList world = GenerateWorld();
+    //BVH_node bvhtree= GenerateWorld();
 
 
     /*绘制图像*/
@@ -187,7 +210,8 @@ int main()
 
                 /*对于每个光线，获取其颜色*/
                 Ray r = camera.getRay(u, v);//在u,v位置发射一个光线
-                color += ray_color(r, bvhtree, max_depth);
+                color += ray_color(r, background, world, max_depth);
+                //color += ray_color(r, background, bvhtree, max_depth);
             }
 
             color /= samples_per_pixel;

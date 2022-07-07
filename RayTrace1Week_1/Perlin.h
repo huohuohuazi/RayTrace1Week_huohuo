@@ -113,8 +113,8 @@ public:
                 for (int dk = 0; dk < 2; dk++)
                     c[di][dj][dk] = randomVec[
                         perm_x[(i + di) & 255] ^
-                            perm_y[(j + dj) & 255] ^
-                            perm_z[(k + dk) & 255]
+                        perm_y[(j + dj) & 255] ^
+                        perm_z[(k + dk) & 255]
                     ];
 
         return perlin_interp(c, u, v, w);
